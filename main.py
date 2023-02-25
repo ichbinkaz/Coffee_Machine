@@ -119,7 +119,8 @@ def coffee_machine():
             elif ingredients == "Sorry, there is not enough coffee 😢":
                 print(ingredients)
                 continue
-            coins = process_coins(choice, resources)
+            else:
+                coins = process_coins(choice, resources)
             if coins == "Not enough coins":
                 print(coins)
                 continue
