@@ -42,18 +42,14 @@ def report(resources):
           f"Money: ${resources['money']}")
 
 
-def prompt(drink):
-    return drink
-
-
-def resource_spend(prompt, resources):
-    if prompt != "espresso":
-        resources["water"] -= MENU[prompt]["ingredients"]["water"]
-        resources["milk"] -= MENU[prompt]["ingredients"]["milk"]
-        resources["coffee"] -= MENU[prompt]["ingredients"]["coffee"]
-    elif prompt == "espresso":
-        resources["water"] -= MENU[prompt]["ingredients"]["water"]
-        resources["coffee"] -= MENU[prompt]["ingredients"]["coffee"]
+def resource_spend(drink, resources):
+    if drink != "espresso":
+        resources["water"] -= MENU[drink]["ingredients"]["water"]
+        resources["milk"] -= MENU[drink]["ingredients"]["milk"]
+        resources["coffee"] -= MENU[drink]["ingredients"]["coffee"]
+    elif drink == "espresso":
+        resources["water"] -= MENU[drink]["ingredients"]["water"]
+        resources["coffee"] -= MENU[drink]["ingredients"]["coffee"]
 
 
 def check_resources(prompt, resources):
@@ -67,14 +63,13 @@ def check_resources(prompt, resources):
             return True
 
     if resources["water"] <= MENU[prompt]["ingredients"]["water"]:
-        print("Sorry, there is not enough water 😢")
-        return False
+        return "Sorry, there is not enough water 😢"
+
     if prompt != "espresso" and resources["milk"] <= MENU[prompt]["ingredients"]["milk"]:
-        print("Sorry, there is not enough milk 😢")
-        return False
+        return "Sorry, there is not enough milk 😢"
+
     if resources["coffee"] <= MENU[prompt]["ingredients"]["coffee"]:
-        print("Sorry, there is not enough coffee 😢")
-        return False
+        return "Sorry, there is not enough coffee 😢"
 
 
 def process_coins(drink, resources):
@@ -106,7 +101,6 @@ def coffee_machine():
 
     while is_machine_on:
         choice = input("What would you like to drink? (espresso/latte/cappuccino)? ")
-        drink = prompt(choice)
 
         if choice == "off":
             is_machine_on = False
@@ -114,14 +108,24 @@ def coffee_machine():
         elif choice == "report":
             report(resources)
 
-        elif check_resources(drink, resources):
-            result = process_coins(drink, resources)
-            if result == "Not enough coins":
-                print(result)
+        else:
+            ingredients = check_resources(choice, resources)
+            if ingredients == "Sorry, there is not enough water 😢":
+                print(ingredients)
+                continue
+            elif ingredients == "Sorry, there is not enough milk 😢":
+                print(ingredients)
+                continue
+            elif ingredients == "Sorry, there is not enough coffee 😢":
+                print(ingredients)
+                continue
+            coins = process_coins(choice, resources)
+            if coins == "Not enough coins":
+                print(coins)
                 continue
             else:
-                print(result)
-                resource_spend(drink, resources)
+                print(coins)
+                resource_spend(choice, resources)
 
 
 coffee_machine()
